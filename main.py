@@ -175,9 +175,9 @@ def add_feature():
     new_feature.owners = owners
     new_feature.contributors = contributors
 
-    tags_input = request.form.get('tags')
+    tags_input = request.form.getlist('tags')
     # Split the tags input into a list
-    tags = [tag.strip() for tag in tags_input.split(',')]
+    tags = [tag.strip() for tag in tags_input]
 
     # Associate tags with the feature
     for tag_name in tags:
@@ -245,16 +245,10 @@ def delete_feature():
 
 @app.route('/get_tag_suggestions', methods=['GET'])
 def get_tag_suggestions():
-    query = request.args.get('query').strip()
+    tags = Tag.query.all()
+    tag_list = [tag.name for tag in tags]
 
-    # Query your database or other data source for tag suggestions
-    # In this example, we use a list of hardcoded tag suggestions
-    tag_suggestions = ['Tag1', 'Tag2', 'Tag3']
-
-    # Filter suggestions based on the user's input
-    suggestions = [tag for tag in tag_suggestions if query.lower() in tag.lower()]
-
-    return jsonify(suggestions)
+    return jsonify(tag_list)
 
 
 if __name__ == '__main__':

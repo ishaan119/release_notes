@@ -210,6 +210,75 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </style>
 </head>
 <body>
@@ -246,7 +315,7 @@
 
         <div class="form-group">
             <label for="tags">Tags (select multiple):</label>
-            <select class="form-control" id="tags" name="tags" multiple="multiple" style="width: 100%;">
+            <select class="form-control select2" id="tags" name="tags" multiple style="width: 100%;">
                 <!-- Options will be populated dynamically via JavaScript -->
             </select>
         </div>
@@ -281,7 +350,10 @@
                     {{ owner_name.name }}
                     {% if not loop.last %}, {% endif %}
                     {% endfor %}</p>
-
+                <p><strong>Tags:</strong> {% for tag in feature.tags %}
+                    {{ tag.name }}
+                    {% if not loop.last %}, {% endif %}
+                    {% endfor %}</p>
                 <p><strong>Image URL:</strong> <a href="{{ feature.image_url }}" target="_blank">{{ feature.image_url
                     }}</a></p>
                 <p><strong>Video URL:</strong> <a href="{{ feature.video_url }}" target="_blank"> Click the link below
@@ -300,12 +372,51 @@
     </ul>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <!-- Include Select2 JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<script>
+// Initialize Select2 for all elements with class "select2"
+$('.select2').select2({
+    tags: true, // Allow the user to add new tags
+    tokenSeparators: [','], // Use a comma to separate tags
+    ajax: {
+        url: '/get_tag_suggestions', // Replace with your API endpoint for existing tags
+        dataType: 'json',
+        processResults: function (data) {
+            return {
+                results: data.map(tag => ({
+                    id: tag,
+                    text: tag,
+                })),
+            };
+        },
+    },
+    createTag: function (params) {
+        const term = $.trim(params.term);
+
+        if (term === '') {
+            return null; // If the term is empty, do not create a tag
+        }
+
+        return {
+            id: term,
+            text: term,
+            newTag: true, // Add this property to indicate it's a new tag
+        };
+    },
+});
+
+
+
+
+</script>
 <script>
      // Function to delete a feature by sending a DELETE request to the API
     async function deleteFeature(featureName) {
@@ -342,33 +453,43 @@
 
 
 
-</script>
-<script>
-    // Initialize Select2 for the tags input field
-    $('#tags').select2({
-        tags: true, // Allow the user to add new tags
-        tokenSeparators: [','], // Use a comma to separate tags
-    });
 
-    // Event listener for tag suggestions
-    const tagsInput = document.getElementById('tags');
-    // Event listener to populate options.
-    tagsInput.addEventListener('input', async () => {
-    console.log("Here");
-        // Fetch tag suggestions from your backend
-        if (inputValue) {
-            const suggestions = await fetch(`/get_tag_suggestions?query=${inputValue}`)
-                .then(response => response.json());
 
-            // Clear existing options
-            $('#tags').empty();
 
-            // Populate the Select2 input with the suggestions
-            $('#tags').select2({
-                data: suggestions.map(tag => ({ id: tag, text: tag })),
-            });
-        }
-    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
