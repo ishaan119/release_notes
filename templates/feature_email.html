@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Features and Enhancements</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* Feature list styles */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .feature-list-item {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .feature-name {
+            font-size: 20px;
+            color: #333;
+            margin-top: 0;
+        }
+        .feature-description {
+            font-size: 16px;
+            color: #555;
+        }
+        .feature-media {
+            margin-top: 20px;
+        }
+        .feature-image {
+            max-width: 100%;
+            height: auto;
+        }
+        .feature-video {
+            max-width: 100%;
+            height: auto;
+        }
+        .video-link {
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+        /* Email header styles */
+        .email-header {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #007BFF;
+            color: #fff;
+        }
+        .header-logo {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .header-title {
+            font-size: 24px;
+            margin-top: 0;
+        }
+        .header-subtitle {
+            font-size: 18px;
+            margin-top: 0;
+        }
+
+        /* Additional information styles */
+        .additional-info {
+            font-size: 14px;
+            color: #777;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Email Header -->
+        <div class="email-header">
+            <h1 class="header-title">New Features and Enhancements</h1>
+            <p class="header-subtitle">Discover What's New at LetsVenture</p>
+        </div>
+
+        <!-- Feature List -->
+        <ul class="feature-list">
+            {% for feature in selected_features %}
+            <li class="feature-list-item">
+                <h2 class="feature-name">{{ feature.name }}</h2>
+                <p class="feature-description">{{ feature.description }}</p>
+                <div class="feature-media">
+                    {% if feature.image_url %}
+                    <img src="{{ feature.image_url }}" alt="Feature Image" class="feature-image">
+                    {% endif %}
+                    {% if feature.video_url %}
+                    <video controls class="feature-video">
+                        <p>Watch the video: <a href="{{ feature.video_url }}" class="video-link" target="_blank">View Video</a></p>
+                    </video>
+                    {% endif %}
+                </div>
+                <div class="additional-info">
+                    <p><strong>Date:</strong> {{ feature.date }}</p>
+                    <p><strong>Owner:</strong> {{ feature.owner }}</p>
+                    <p><strong>Contributors:</strong> {{ feature.contributors }}</p>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

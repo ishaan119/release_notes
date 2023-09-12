@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Include Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+        }
+
+        ul.feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-item {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            position: relative;
+        }
+
+        .feature-item h2 {
+            font-size: 20px;
+            color: #333;
+            margin-top: 0;
+        }
+
+        .feature-item p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .feature-item button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+
+        .feature-item button:hover {
+            background-color: #c82333;
+        }
+
+        .add-feature-form {
+            margin-top: 20px;
+        }
+
+        .add-feature-form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .add-feature-form input[type="text"],
+        .add-feature-form input[type="url"],
+        .add-feature-form select,
+        .add-feature-form textarea,
+        .add-feature-form .owners-input,
+        .add-feature-form .contributors-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .add-feature-form button[type="submit"] {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .add-feature-form button[type="submit"]:hover {
+            background-color: #218838;
+        }
+
+        .owners-input,
+        .contributors-input {
+            min-height: 50px;
+        }
+
+        .feature-details {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #777;
+        }
+        .feature-details a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .feature-details a:hover {
+            text-decoration: underline;
+        }
+        .delete-feature-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .delete-feature-btn:hover {
+            background-color: #c82333;
+        }
+        /* Add CSS styles for the form elements here */
+        form {
+            margin: 20px; /* Adjust the margin as needed */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px; /* Adjust the margin between labels */
+        }
+
+        input[type="text"],
+        textarea,
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px; /* Adjust the margin between form fields */
+        }
+
+        /* CSS for Tag Suggestions */
+        .tag-suggestions {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 5px;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            position: absolute;
+            background-color: #fff;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tag-suggestions li {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .tag-suggestions li:hover {
+            background-color: #f2f2f2;
+        }
+
+
+
+
+
+      .select2-container--default .select2-selection--multiple {
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Feature Management</h1>
+    <ul class="feature-list">
+        <!-- Existing feature items will be displayed here -->
+    </ul>
+    <a href="{{ url_for('all_features') }}" class="vbutton">View All Features</a>
+
+
+    <!-- Add New Feature Form -->
+    <form class="add-feature-form" method="POST" action="/add_feature" enctype="multipart/form-data">
+        <h2>Add New Feature</h2>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4" required></textarea>
+
+        <label for="image_url">Image URL:</label><br>
+        <input type="file" id="image_url" name="image" accept="image/*"><br>
+
+        <br><label for="video_url">Video URL:</label>
+        <input type="url" id="video_url" name="video_url">
+
+        <label for="category">Category:</label>
+        <select id="category" name="category">
+            <option value="feature">Feature</option>
+            <option value="bug">Bug</option>
+            <!-- Add more categories as needed -->
+        </select>
+
+
+        <div class="form-group">
+            <label for="tags">Tags (select multiple):</label>
+            <select class="form-control" id="tags" name="tags" multiple="multiple" style="width: 100%;">
+                <!-- Options will be populated dynamically via JavaScript -->
+            </select>
+        </div>
+
+        <label for="date">Date:</label><br>
+        <input type="date" id="date" name="date" required><br>
+
+        <br><label for="owners" class="owners-label">Owners:</label>
+        <input type="text" id="owners" name="owners" class="owners-input"
+               placeholder="Enter owner names separated by commas (e.g., John, Jane)">
+
+        <label for="contributors" class="contributors-label">Contributors:</label>
+        <input type="text" id="contributors" name="contributors" class="contributors-input"
+               placeholder="Enter contributor names separated by commas (e.g., Alice, Bob)">
+
+        <button type="submit">Add Feature</button>
+    </form>
+
+    <ul class="feature-list">
+        {% for feature in features %}
+        <li class="feature-item">
+            <h2>{{ feature.name }}</h2>
+            <p>{{ feature.description }}</p>
+            <div class="feature-details">
+                <p><strong>Category:</strong> {{ feature.category }}</p>
+                <p><strong>Date:</strong> {{ feature.date }}</p>
+                <p><strong>Owners:</strong> {% for owner_name in feature.owners %}
+                    {{ owner_name.name }}
+                    {% if not loop.last %}, {% endif %}
+                    {% endfor %}</p>
+                <p><strong>Contributors:</strong> {% for owner_name in feature.contributors %}
+                    {{ owner_name.name }}
+                    {% if not loop.last %}, {% endif %}
+                    {% endfor %}</p>
+
+                <p><strong>Image URL:</strong> <a href="{{ feature.image_url }}" target="_blank">{{ feature.image_url
+                    }}</a></p>
+                <p><strong>Video URL:</strong> <a href="{{ feature.video_url }}" target="_blank"> Click the link below
+                    to watch the video {{ feature.video_url }}</a></p>
+                <video controls class="feature-video">
+                    <p>Click the link below to watch the video:</p>
+                    <a href="{{feature.video_url }}" target="_blank">Watch Video</a>
+                </video>
+            </div>
+            <button class="delete-feature-btn" data-feature="{{ feature.name }}"
+                    onclick="deleteFeature('{{ feature.name }}')">X
+            </button>
+
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Include Select2 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script>
+     // Function to delete a feature by sending a DELETE request to the API
+    async function deleteFeature(featureName) {
+        try {
+            const response = await fetch('/delete_feature', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: featureName })
+            });
+
+            if (response.ok) {
+                // Feature deleted successfully
+                console.log(`Feature '${featureName}' deleted.`);
+                // Remove the deleted feature from the list without reloading the page
+                    const featureItem = document.querySelector(`[data-feature="${featureName}"]`);
+                    if (featureItem) {
+                        featureItem.parentElement.removeChild(featureItem);
+                    }
+            } else if (response.status === 404) {
+                console.error(`Feature '${featureName}' not found.`);
+            } else {
+                console.error('Failed to delete feature.');
+            }
+        } catch (error) {
+            console.error('Error deleting feature:', error);
+        }
+    }
+
+
+
+
+
+
+
+</script>
+<script>
+    // Initialize Select2 for the tags input field
+    $('#tags').select2({
+        tags: true, // Allow the user to add new tags
+        tokenSeparators: [','], // Use a comma to separate tags
+    });
+
+    // Event listener for tag suggestions
+    const tagsInput = document.getElementById('tags');
+    // Event listener to populate options.
+    tagsInput.addEventListener('input', async () => {
+    console.log("Here");
+        // Fetch tag suggestions from your backend
+        if (inputValue) {
+            const suggestions = await fetch(`/get_tag_suggestions?query=${inputValue}`)
+                .then(response => response.json());
+
+            // Clear existing options
+            $('#tags').empty();
+
+            // Populate the Select2 input with the suggestions
+            $('#tags').select2({
+                data: suggestions.map(tag => ({ id: tag, text: tag })),
+            });
+        }
+    });
+
+
+
+
+</script>
+</body>
+</html>

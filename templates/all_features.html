@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Features</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        /* Header styles */
+        .header {
+            padding: 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            text-align: center;
+        }
+        .company-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .company-logo {
+            max-width: 150px;
+            height: auto;
+        }
+        .company-name {
+            font-size: 1.5rem;
+            margin-top: 10px;
+        }
+        /* Filter section styles */
+        .filter {
+            padding: 20px;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .filter h2 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            color: #555;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        /* Feature list styles */
+        .features {
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-top: 0;
+        }
+        .feature-info {
+            margin-top: 10px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+        }
+        video {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+        }
+        /* Color updates */
+        .container {
+            background-color: #f0f0f0;
+        }
+        /* Button styles */
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="company-info">
+                <img src="https://letsventure.s3.ap-southeast-1.amazonaws.com/letsventure/LetsVenture-Colorlogo.svg" alt="Company Logo" class="company-logo">
+                <h1 class="company-name">LetsVenture</h1>
+            </div>
+        </div>
+        <div class="filter">
+            <h2>Filter by Category</h2>
+            <label for="category-filter">Select Category:</label>
+            <select id="category-filter">
+                <option value="all">All Categories</option>
+                {% for category in categories %}
+                <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="features">
+            <h1>All Features</h1>
+            <form method="POST" action="/send_email">
+                <ul id="feature-list">
+                    {% for feature in features %}
+                    <li data-category="{{ feature.category }}">
+                        <h2>{{ feature.name }}</h2>
+                        <p class="feature-info">{{ feature.description }}</p>
+                        <p class="feature-info">Category: {{ feature.category }}</p>
+                        <p class="feature-info">Date: {{ feature.date }}</p>
+                        <p><strong>Owners:</strong> {% for owner_name in feature.owners %}
+                                            {{ owner_name.name }}
+                                            {% if not loop.last %}, {% endif %}
+                                        {% endfor %}</p>
+                        {% if feature.contributors|length > 0 %}
+                        <p><strong>Contributors:</strong> {% for owner_name in feature.contributors %}
+                                            {{ owner_name.name }}
+                                            {% if not loop.last %}, {% endif %}
+                                        {% endfor %}</p>
+                        {% endif %}
+                        {% if feature.image_url %}
+                        <img src="{{ feature.image_url }}" alt="Feature Image">
+                        {% endif %}
+                        {% if feature.video_url %}
+                        <p>Click the link below to watch the video:</p>
+                        <a href="{{feature.video_url }}" target="_blank">Watch Video</a>
+
+                        <br>
+                        {% endif %}
+                        <input type="checkbox" name="feature_checkbox" value="{{ feature.name }}">
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button type="submit" id="send-email-btn" disabled>Send Email</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        // JavaScript for selecting features and enabling the "Send Email" button
+        const featureList = document.getElementById('feature-list');
+        const sendEmailBtn = document.getElementById('send-email-btn');
+        const selectedFeaturesInput = document.querySelector('input[name="selected_features"]');
+        featureList.addEventListener('change', () => {
+            const selectedCheckboxes = document.querySelectorAll('input[name="feature_checkbox"]:checked');
+            const selectedFeatureNames = Array.from(selectedCheckboxes).map(checkbox => checkbox.value);
+            sendEmailBtn.disabled = selectedFeatureNames.length === 0;
+        });
+        // JavaScript for filtering features by category
+        const categoryFilter = document.getElementById('category-filter');
+        categoryFilter.addEventListener('change', () => {
+            const selectedCategory = categoryFilter.value;
+            const featureItems = featureList.querySelectorAll('li');
+            featureItems.forEach((item) => {
+                const itemCategory = item.getAttribute('data-category');
+                if (selectedCategory === 'all' || selectedCategory === itemCategory) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
