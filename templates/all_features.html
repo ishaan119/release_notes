@@ -126,64 +126,130 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
+        /* Add styles for the tag filter section */
+        .tag-filter {
+            padding: 20px;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            width: 250px; /* Adjust the width as needed */
+        }
+        .tag-filter h2 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .tag-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .tag-item {
+            margin-bottom: 10px;
+        }
+        .tag-item a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="company-info">
-                <img src="https://letsventure.s3.ap-southeast-1.amazonaws.com/letsventure/LetsVenture-Colorlogo.svg" alt="Company Logo" class="company-logo">
-                <h1 class="company-name">LetsVenture</h1>
-            </div>
-        </div>
-        <div class="filter">
-            <h2>Filter by Category</h2>
-            <label for="category-filter">Select Category:</label>
-            <select id="category-filter">
-                <option value="all">All Categories</option>
-                {% for category in categories %}
-                <option value="{{ category }}">{{ category }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="features">
-            <h1>All Features</h1>
-            <form method="POST" action="/send_email">
-                <ul id="feature-list">
-                    {% for feature in features %}
-                    <li data-category="{{ feature.category }}">
-                        <h2>{{ feature.name }}</h2>
-                        <p class="feature-info">{{ feature.description }}</p>
-                        <p class="feature-info">Category: {{ feature.category }}</p>
-                        <p class="feature-info">Date: {{ feature.date }}</p>
-                        <p><strong>Owners:</strong> {% for owner_name in feature.owners %}
-                                            {{ owner_name.name }}
-                                            {% if not loop.last %}, {% endif %}
-                                        {% endfor %}</p>
-                        {% if feature.contributors|length > 0 %}
-                        <p><strong>Contributors:</strong> {% for owner_name in feature.contributors %}
-                                            {{ owner_name.name }}
-                                            {% if not loop.last %}, {% endif %}
-                                        {% endfor %}</p>
-                        {% endif %}
-                        {% if feature.image_url %}
-                        <img src="{{ feature.image_url }}" alt="Feature Image">
-                        {% endif %}
-                        {% if feature.video_url %}
-                        <p>Click the link below to watch the video:</p>
-                        <a href="{{feature.video_url }}" target="_blank">Watch Video</a>
-
-                        <br>
-                        {% endif %}
-                        <input type="checkbox" name="feature_checkbox" value="{{ feature.name }}">
-                    </li>
-                    {% endfor %}
-                </ul>
-                <button type="submit" id="send-email-btn" disabled>Send Email</button>
-            </form>
+<div class="container">
+    <div class="header">
+        <div class="company-info">
+            <img src="https://letsventure.s3.ap-southeast-1.amazonaws.com/letsventure/LetsVenture-Colorlogo.svg"
+                 alt="Company Logo" class="company-logo">
+            <h1 class="company-name">LetsVenture</h1>
         </div>
     </div>
-    <script>
+    <div class="filter">
+        <h2>Filter by Tags</h2>
+        <label for="category-filter">Select Tags:</label>
+        <select id="category-filter">
+            <option value="all">All Tags</option>
+            {% for tag in tags %}
+            <option value="{{ tag }}">{{ tag }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="features">
+        <h1>All Features</h1>
+        <form method="POST" action="/send_email">
+            <ul id="feature-list">
+                {% for feature in features %}
+                <li data-category="{{ feature.tags|map(attribute='name')|join(', ') }}">
+                    <h2>{{ feature.name }}</h2>
+                    <p class="feature-info">{{ feature.description }}</p>
+                    <p class="feature-info">Category: {{ feature.category }}</p>
+                    <p><strong>Tags:</strong> {% for tag in feature.tags %}
+                        {{ tag.name }}
+                        {% if not loop.last %}, {% endif %}
+                        {% endfor %}</p>
+                    <p class="feature-info">Date: {{ feature.date }}</p>
+                    <p><strong>Owners:</strong> {% for owner_name in feature.owners %}
+                        {{ owner_name.name }}
+                        {% if not loop.last %}, {% endif %}
+                        {% endfor %}</p>
+                    {% if feature.contributors|length > 0 %}
+                    <p><strong>Contributors:</strong> {% for owner_name in feature.contributors %}
+                        {{ owner_name.name }}
+                        {% if not loop.last %}, {% endif %}
+                        {% endfor %}</p>
+                    {% endif %}
+                    {% if feature.image_url %}
+                    <img src="{{ feature.image_url }}" alt="Feature Image">
+                    {% endif %}
+                    {% if feature.video_url %}
+                    <p>Click the link below to watch the video:</p>
+                    <a href="{{feature.video_url }}" target="_blank">Watch Video</a>
+
+                    <br>
+                    {% endif %}
+                    <input type="checkbox" name="feature_checkbox" value="{{ feature.name }}">
+                </li>
+                {% endfor %}
+            </ul>
+            <button type="submit" id="send-email-btn" disabled>Send Email</button>
+        </form>
+    </div>
+</div>
+<script>
         // JavaScript for selecting features and enabling the "Send Email" button
         const featureList = document.getElementById('feature-list');
         const sendEmailBtn = document.getElementById('send-email-btn');
@@ -200,13 +266,46 @@
             const featureItems = featureList.querySelectorAll('li');
             featureItems.forEach((item) => {
                 const itemCategory = item.getAttribute('data-category');
-                if (selectedCategory === 'all' || selectedCategory === itemCategory) {
+                if (selectedCategory === 'all' || itemCategory.includes(selectedCategory)) {
                     item.style.display = 'block';
                 } else {
                     item.style.display = 'none';
                 }
             });
         });
-    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
 </body>
 </html>

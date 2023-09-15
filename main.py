@@ -3,24 +3,23 @@ from datetime import date
 
 import boto3
 import sendgrid
-from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from sendgrid.helpers.mail import Mail
 
-load_dotenv()  # Load variables from .env file
+from config import DevelopmentConfig, ProductionConfig
 
 app = Flask(__name__)
 
-# Configure SQLite database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///features.db'  # SQLite database file name
+if os.environ['FLASK_ENV'] == 'production':
+    app.config.from_object(ProductionConfig)
+else:
+    app.config.from_object(DevelopmentConfig)
+
 db = SQLAlchemy(app)
 
-# Replace 'YOUR_SENDGRID_API_KEY' with your actual SendGrid API key
-SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
-print(SENDGRID_API_KEY)
-sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
+sg = sendgrid.SendGridAPIClient(api_key=app.config["SENDGRID_API_KEY"])
 
 # Flask-Uploads configuration
 photos = UploadSet("photos", IMAGES)
@@ -28,14 +27,12 @@ app.config["UPLOADED_PHOTOS_DEST"] = "uploads"  # Specify the folder to store up
 configure_uploads(app, photos)
 
 # AWS S3 configuration
-AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
-AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
-S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
+S3_BUCKET_NAME = app.config["S3_BUCKET_NAME"]
 
 s3_client = boto3.client(
     "s3",
-    aws_access_key_id=AWS_ACCESS_KEY,
-    aws_secret_access_key=AWS_SECRET_KEY,
+    aws_access_key_id=app.config["AWS_ACCESS_KEY"],
+    aws_secret_access_key=app.config["AWS_SECRET_KEY"],
 )
 
 # Define the Feature model with many-to-many relationships
@@ -100,7 +97,9 @@ def index():
     features = Feature.query.all()
     categories = [feature.category for feature in features if feature.category]
     categories = list(set(categories))  # Remove duplicates
-    return render_template('index.html', features=features, categories=categories)
+    tags = Tag.query.all()
+    tag_list = [tag.name for tag in tags]
+    return render_template('index.html', features=features, tags=tag_list)
 
 
 @app.route('/add_feature', methods=['POST'])
@@ -110,13 +109,6 @@ def add_feature():
     if 'image' in request.files:
         image = request.files['image']
         if image.filename != '':
-            # Generate a unique filename for the image (e.g., using UUID)
-            new_filename = "example.jpg"
-
-            # # Save the image to a temporary location
-            # temp_image_path = os.path.join(app.config['UPLOADS_DEFAULT_DEST'], new_filename)
-            # image.save(temp_image_path)
-
             # Upload the image to Amazon S3
             s3_client.put_object(
                 Body=image,
@@ -130,7 +122,7 @@ def add_feature():
     feature_description = request.form.get('description')
     video_url = request.form.get('video_url')
     category = request.form.get('category')
-    date = request.form.get('date')
+    feature_release_date = request.form.get('date')
 
     # Create a new Feature instance and add it to the database
     new_feature = Feature(
@@ -139,7 +131,7 @@ def add_feature():
         image_url=s3_url,
         video_url=video_url,
         category=category,
-        date=date
+        date=feature_release_date
     )
 
     # Add owners and contributors
@@ -197,16 +189,15 @@ def all_features():
     features = Feature.query.all()
     categories = [feature.category for feature in features if feature.category]
     categories = list(set(categories))  # Remove duplicates
-    return render_template('all_features.html', features=features, categories=categories)
+    tags = Tag.query.all()
+    tag_list = [tag.name for tag in tags]
+    return render_template('all_features.html', features=features, tags=tag_list)
 
 
 @app.route('/send_email', methods=['POST'])
 def send_email():
     # selected_features = request.form.getlist('selected_features')
     features = Feature.query.all()
-
-    # Get the last two selected features
-    # last_two_features = selected_features[-1:]
 
     # Generate HTML email content based on selected features
     email_content = render_template('feature_email.html', selected_features=features)
@@ -252,4 +243,4 @@ def get_tag_suggestions():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
