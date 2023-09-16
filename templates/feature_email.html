@@ -90,40 +90,58 @@
             color: #777;
             margin-top: 20px;
         }
+
+
+
+
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Email Header -->
-        <div class="email-header">
-            <h1 class="header-title">New Features and Enhancements</h1>
-            <p class="header-subtitle">Discover What's New at LetsVenture</p>
-        </div>
-
-        <!-- Feature List -->
-        <ul class="feature-list">
-            {% for feature in selected_features %}
-            <li class="feature-list-item">
-                <h2 class="feature-name">{{ feature.name }}</h2>
-                <p class="feature-description">{{ feature.description }}</p>
-                <div class="feature-media">
-                    {% if feature.image_url %}
-                    <img src="{{ feature.image_url }}" alt="Feature Image" class="feature-image">
-                    {% endif %}
-                    {% if feature.video_url %}
-                    <video controls class="feature-video">
-                        <p>Watch the video: <a href="{{ feature.video_url }}" class="video-link" target="_blank">View Video</a></p>
-                    </video>
-                    {% endif %}
-                </div>
-                <div class="additional-info">
-                    <p><strong>Date:</strong> {{ feature.date }}</p>
-                    <p><strong>Owner:</strong> {{ feature.owner }}</p>
-                    <p><strong>Contributors:</strong> {{ feature.contributors }}</p>
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
+<div class="container">
+    <!-- Email Header -->
+    <div class="email-header">
+        <h1 class="header-title">Discover What's New at LetsVenture</h1>
     </div>
+    <br>
+    <br>
+    <!-- Feature List -->
+    <ul class="feature-list">
+        {% for feature in selected_features %}
+        <li class="feature-list-item">
+            <h2 class="feature-name">{{ feature.name }}</h2>
+            <p class="feature-description">{{ feature.description }}</p>
+            <div class="feature-media">
+                {% if feature.image_url %}
+                <img src="{{ feature.image_url }}" alt="Feature Image" class="feature-image">
+                {% endif %}
+                {% if feature.video_url %}
+                <video controls class="feature-video">
+                    <p>Watch the video: <a href="{{ feature.video_url }}" class="video-link" target="_blank">View
+                        Video</a></p>
+                </video>
+                {% endif %}
+            </div>
+            <div class="additional-info">
+                <p><strong>Date:</strong> {{ feature.date }}</p>
+                <p><strong>Owners:</strong> {% for owner_name in feature.owners %}
+                    {{ owner_name.name }}
+                    {% if not loop.last %}, {% endif %}
+                    {% endfor %}</p>
+                {% if feature.contributors|length > 0 %}
+                <p><strong>Contributors:</strong> {% for owner_name in feature.contributors %}
+                    {{ owner_name.name }}
+                    {% if not loop.last %}, {% endif %}
+                    {% endfor %}</p>
+                {% endif %}
+                <p><strong>Tags:</strong> {% for tag in feature.tags %}
+                    {{ tag.name }}
+                    {% if not loop.last %}, {% endif %}
+                    {% endfor %}</p>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
 </body>
 </html>

@@ -88,7 +88,7 @@ with app.app_context():
     db.create_all()
 
 
-@app.route('/')
+@app.route('/features')
 def index():
     """
     Root route to take to add Feature
@@ -185,6 +185,7 @@ def add_feature():
 
 
 @app.route('/all_features')
+@app.route('/')
 def all_features():
     features = Feature.query.all()
     categories = [feature.category for feature in features if feature.category]
@@ -196,8 +197,8 @@ def all_features():
 
 @app.route('/send_email', methods=['POST'])
 def send_email():
-    # selected_features = request.form.getlist('selected_features')
-    features = Feature.query.all()
+    selected_features = request.form.getlist('feature_checkbox')
+    features = Feature.query.filter(Feature.name.in_(selected_features)).all()
 
     # Generate HTML email content based on selected features
     email_content = render_template('feature_email.html', selected_features=features)

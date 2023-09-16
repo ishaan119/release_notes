@@ -195,6 +195,11 @@
 
 
 
+
+
+
+
+
     </style>
 </head>
 <body>
@@ -270,14 +275,10 @@
                     {{ tag.name }}
                     {% if not loop.last %}, {% endif %}
                     {% endfor %}</p>
-                <p><strong>Image URL:</strong> <a href="{{ feature.image_url }}" target="_blank">{{ feature.image_url
-                    }}</a></p>
-                <p><strong>Video URL:</strong> <a href="{{ feature.video_url }}" target="_blank"> Click the link below
-                    to watch the video {{ feature.video_url }}</a></p>
-                <video controls class="feature-video">
-                    <p>Click the link below to watch the video:</p>
-                    <a href="{{feature.video_url }}" target="_blank">Watch Video</a>
-                </video>
+                <p><strong>Image URL:</strong> <a href="{{ feature.image_url }}" target="_blank">View Image</a></p>
+                <p><strong>Video URL:</strong> <a href="{{ feature.video_url }}" target="_blank"> Click the link
+                    to watch the video</a></p>
+
             </div>
             <button class="delete-feature-btn" data-feature="{{ feature.name }}"
                     onclick="deleteFeature('{{ feature.name }}')">X
@@ -335,6 +336,11 @@ $('.select2').select2({
 
 
 
+
+
+
+
+
 </script>
 <script>
      // Function to delete a feature by sending a DELETE request to the API
@@ -356,6 +362,8 @@ $('.select2').select2({
                     if (featureItem) {
                         featureItem.parentElement.removeChild(featureItem);
                     }
+                    // Reload the page after the AJAX call is complete
+                    location.reload();
             } else if (response.status === 404) {
                 console.error(`Feature '${featureName}' not found.`);
             } else {
@@ -365,6 +373,11 @@ $('.select2').select2({
             console.error('Error deleting feature:', error);
         }
     }
+
+
+
+
+
 
 
 
