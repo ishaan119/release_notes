@@ -24,7 +24,7 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = 'postgresql://username:password@localhost/dbname'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///features.db'
     SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
     # AWS S3 configuration
     AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
