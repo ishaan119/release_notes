@@ -244,4 +244,4 @@ def get_tag_suggestions():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=app.config["FLASK_PORT"])

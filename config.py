@@ -20,6 +20,7 @@ class DevelopmentConfig(Config):
     AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
     S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
     FLASK_ENV = os.getenv("FLASK_ENV")
+    FLASK_PORT = 8000
 
 
 class ProductionConfig(Config):
@@ -31,3 +32,4 @@ class ProductionConfig(Config):
     AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
     S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
     FLASK_ENV = os.getenv("FLASK_ENV")
+    FLASK_PORT = 80
