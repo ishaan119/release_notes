@@ -207,7 +207,7 @@ def send_email():
     message = Mail(
         from_email='ishaan.sutaria@letsventure.com',  # Replace with your sender email
         to_emails='ishaansutaria@gmail.com',  # Replace with your recipient email
-        subject="LetsVenture Release Notes: Date {0}".format(date.today().strftime('%d-%m-%Y')),
+        subject="🚀 LetsVenture Product Release Notes: Date {0} 🚀".format(date.today().strftime('%d-%m-%Y')),
         html_content=email_content
     )
 
