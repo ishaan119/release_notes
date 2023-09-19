@@ -8,7 +8,7 @@
         /* Global styles */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
         }
@@ -21,8 +21,10 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         h1 {
-            font-size: 24px;
+            font-size: 28px;
             color: #333;
+            margin-top: 10px;
+            text-align: center;
         }
 
         /* Feature list styles */
@@ -36,15 +38,15 @@
             padding: 20px;
             margin-bottom: 20px;
             border-radius: 10px;
-            background-color: #f9f9f9;
+            background-color: #fff;
         }
         .feature-name {
-            font-size: 20px;
+            font-size: 24px;
             color: #333;
             margin-top: 0;
         }
         .feature-description {
-            font-size: 16px;
+            font-size: 18px;
             color: #555;
         }
         .feature-media {
@@ -53,6 +55,8 @@
         .feature-image {
             max-width: 100%;
             height: auto;
+            display: block;
+            margin: 0 auto;
         }
         .feature-video {
             max-width: 100%;
@@ -76,11 +80,11 @@
             margin-bottom: 10px;
         }
         .header-title {
-            font-size: 24px;
+            font-size: 32px;
             margin-top: 0;
         }
         .header-subtitle {
-            font-size: 18px;
+            font-size: 22px;
             margin-top: 0;
         }
 
@@ -91,10 +95,6 @@
             margin-top: 20px;
         }
 
-
-
-
-
     </style>
 </head>
 <body>
@@ -103,8 +103,6 @@
     <div class="email-header">
         <h1 class="header-title">Discover What's New at LetsVenture</h1>
     </div>
-    <br>
-    <br>
     <!-- Feature List -->
     <ul class="feature-list">
         {% for feature in selected_features %}
